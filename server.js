@@ -29,31 +29,109 @@ let livros = [{
     ano: 1931,
     n_paginas: 126,
     edicao: 2,
-    editora: 'Globo'
+    editora: 'Globo',
+    autor: 'Monteiro Lobato'
 },
 {
     titulo: 'O picapau Amarelo',
     ano: 1939,
     n_paginas: 147,
     edicao: 3,
-    editora: 'Globo'
+    editora: 'Globo',
+    autor: 'Monteiro Lobato'
 },
 {
     titulo: 'Sagarana',
     ano: 1946,
     n_paginas: 268,
     edicao: 7,
-    editora: 'Abril'
+    editora: 'Abril',
+    autor: 'Guimarães Rosa'
 }
 ]
 
-biblioteca = []
+//app.get('/', function(req, res){
+//    res.send("<h1>Hello world!</h1>");
 
-app.get('/', function(req, res){
-    res.send("<h1>Hello world!</h1>");
-})
-const PORT = process.env.PORT || 5000;
+ //   res.status(404).send("Não encontrado");
+//});
 
-app.listen(PORT, function() {
-    console.log('Server iniciado na porta: ' + PORT);
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+
+app.post('/cadastro/autor', function (req, res){
+    const autor = req.body;
+
+    for (const i =0; i< autores.length; i++)  {
+        if (autor === autores[i].nome){
+            res.send("Autor já registrado");
+            break;
+        };
+    };
+
+    autores.push(autor);
+
+    res.send("Autor registrado com sucesso!");
+});
+
+app.post('/cadastro/livro', function (req, res){
+    const livro = req.body;
+
+    console.log(req.body);
+
+    livros.push(livro);
+    
+    res.send("Livro registrado com sucesso!");
+});
+
+app.post('/editar/autor', function (req, res){
+    const autor = req.body;
+
+    for (const i =0; i< autores.length; i++)  {
+        if (autor.nome === autores[i].nome){
+            autores[i] = autor;
+        };
+    };
+
+    res.send(autor.nome + " atualizado com sucesso!");
+});
+
+app.post('/editar/livro', function (req, res){
+    const livro = req.body;
+
+    for (const i =0; i< livros.length; i++)  {
+        if (livro.titulo === livros[i].titulo){
+            livros[i] = livro;
+        };
+    };
+
+    res.send(livro.titulo + " atualizado com sucesso!");
+});
+
+app.post('/deletar/autor', function (req, res){
+    const autor = req.body;
+
+    for (const i =0; i< autores.length; i++)  {
+        if (autor.nome === autores[i].nome){
+            autores.splice(i, 1);
+        };
+    };
+
+    res.send(autor.nome + " atualizado com sucesso!");
+});
+
+app.post('/deletar/livro', function (req, res){
+    const livro = req.body;
+
+    for (const i =0; i< livros.length; i++)  {
+        if (livro.titulo === livros[i].titulo){
+            livros.splice(i, 1);
+        };
+    };
+
+    res.send(livro.titulo + " atualizado com sucesso!");
+});
+
+app.listen(PORT, function(){
+    console.log("Servidor inicializado!")
 });
