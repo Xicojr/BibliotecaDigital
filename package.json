@@ -1,0 +1,26 @@
+{
+  "name": "bibliotecadigital",
+  "version": "1.0.0",
+  "description": "API de uma biblioteca digital",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "nodemon server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Xicojr/BibliotecaDigital.git"
+  },
+  "author": "Francisco das Chagas Peres Júnior",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Xicojr/BibliotecaDigital/issues"
+  },
+  "homepage": "https://github.com/Xicojr/BibliotecaDigital#readme",
+  "dependencies": {
+    "express": "^4.17.1",
+    "nodemon": "^2.0.6",
+    "sequelize": "^6.3.5",
+    "sqlite3": "^5.0.0"
+  }
+}
