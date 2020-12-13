@@ -6,10 +6,10 @@ Criação de uma Biblioteca Digital, sendo essa uma API REST FULL com implementa
 
 ## Funcionalidades
 
-- [x] Cadastrar Autores e Livros
-- [x] Edicação de Autores e Livros
-- [x] Deleção de Autores e Livros
-- [x] Marcar livros como favoritos e lidos
+- [ ] Cadastrar Autores e Livros
+- [ ] Edicação de Autores e Livros
+- [ ] Deleção de Autores e Livros
+- [ ] Marcar livros como favoritos e lidos
 
 ## Esquema de Banco de Dados
 
