@@ -50,19 +50,13 @@ let livros = [{
 }
 ]
 
-//app.get('/', function(req, res){
-//    res.send("<h1>Hello world!</h1>");
+app.use(express.json())
+app.use(express.urlencoded({ extended: true }))
 
- //   res.status(404).send("Não encontrado");
-//});
-
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
-
-app.post('/cadastro/autor', function (req, res){
+app.post('autor', function (req, res){
     const autor = req.body;
 
-    for (const i =0; i< autores.length; i++)  {
+    for (var i = 0; i< autores.length; i++)  {
         if (autor === autores[i].nome){
             res.send("Autor já registrado");
             break;
@@ -74,20 +68,20 @@ app.post('/cadastro/autor', function (req, res){
     res.send("Autor registrado com sucesso!");
 });
 
-app.post('/cadastro/livro', function (req, res){
+app.post('/livro', function (req, res){
     const livro = req.body;
 
-    console.log(req.body);
+    console.log(livro);
 
     livros.push(livro);
     
     res.send("Livro registrado com sucesso!");
 });
 
-app.post('/editar/autor', function (req, res){
+app.put('/autor', function (req, res){
     const autor = req.body;
 
-    for (const i =0; i< autores.length; i++)  {
+    for (var i =0; i< autores.length; i++)  {
         if (autor.nome === autores[i].nome){
             autores[i] = autor;
         };
@@ -96,10 +90,10 @@ app.post('/editar/autor', function (req, res){
     res.send(autor.nome + " atualizado com sucesso!");
 });
 
-app.post('/editar/livro', function (req, res){
+app.put('/livro', function (req, res){
     const livro = req.body;
 
-    for (const i =0; i< livros.length; i++)  {
+    for (var i =0; i< livros.length; i++)  {
         if (livro.titulo === livros[i].titulo){
             livros[i] = livro;
         };
@@ -108,19 +102,19 @@ app.post('/editar/livro', function (req, res){
     res.send(livro.titulo + " atualizado com sucesso!");
 });
 
-app.post('/deletar/autor', function (req, res){
+app.delete('/autor', function (req, res){
     const autor = req.body;
 
-    for (const i =0; i< autores.length; i++)  {
+    for (var i =0; i< autores.length; i++)  {
         if (autor.nome === autores[i].nome){
             autores.splice(i, 1);
         };
     };
 
-    res.send(autor.nome + " atualizado com sucesso!");
+    res.send(autor.nome + " deletado com sucesso!");
 });
 
-app.post('/deletar/livro', function (req, res){
+app.delete('/livro', function (req, res){
     const livro = req.body;
 
     for (const i =0; i< livros.length; i++)  {
@@ -129,8 +123,16 @@ app.post('/deletar/livro', function (req, res){
         };
     };
 
-    res.send(livro.titulo + " atualizado com sucesso!");
+    res.send(livro.titulo + " deletado com sucesso!");
 });
+
+app.get('/biblioteca', function(req, res){
+    res.send(livros);
+})
+
+app.get('/autores', function(req, res){
+    res.send(autores);
+})
 
 app.listen(PORT, function(){
     console.log("Servidor inicializado!")

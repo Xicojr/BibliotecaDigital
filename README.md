@@ -2,7 +2,7 @@
 
 ## Objetivo
 
-Criação de uma Biblioteca Digital, sendo essa uma API REST FULL com implementação das funcionalidades a seguir: 
+Criação de uma Biblioteca Digital utilizando NODE.js, sendo essa uma API REST FULL com implementação das funcionalidades a seguir: 
 
 ## Funcionalidades
 
