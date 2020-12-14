@@ -1,6 +1,6 @@
-const Sequlize = require('sequelize');
+const {Sequlize} = require('sequelize');
 
-const connect = Sequelize({
+const connect = new Sequelize({
     dialect: 'sqlite',
     storage: 'Banco_Biblioteca.sdb'
   });
