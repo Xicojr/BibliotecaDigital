@@ -4,8 +4,8 @@
   "description": "API de uma biblioteca digital",
   "main": "server.js",
   "scripts": {
-    "start": "nodemon server.js",
-    "client": "nodemon client.js"
+    "start": "node server.js",
+    "client": "node client.js"
   },
   "repository": {
     "type": "git",
