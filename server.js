@@ -1,8 +1,8 @@
 const express = require('express');
 const app = express();
-const PORT = process.env.PORT || 80;
+const PORT = process.env.PORT || 5000;
 
-//Conexão ao Banco de Dados
+//Conexão ao Banco de Dados SQLite
 const sqlite3 = require('sqlite3').verbose();
 const db = new sqlite3.Database('Banco_Biblioteca.sdb', (err) => {
     if (err){
@@ -11,11 +11,15 @@ const db = new sqlite3.Database('Banco_Biblioteca.sdb', (err) => {
     console.log('Conectado ao Banco de Dados!!')
 });
 
+// O body de uma requisição é indefinido por padrão, com esses comandos ele pode ser preenchido com dados do corpo da requisição
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
 
-d = new Date();
+//Variavel na qual a data atual é armazenada para as aplicações da API
+var d = new Date();
 
+
+// Aplicação dos métodos HTTP no banco de dados em si, essas sendo implementadas para cumprimento das funcionalidades.
 db.serialize(function(){
 
     app.post('/autor', function (req, res){
@@ -33,10 +37,10 @@ db.serialize(function(){
     
         var stmt = db.prepare("INSERT INTO book VALUES (?, ?, ?, ?, ?, ?, ?)");
 
-        db.each("SELECT id, first_name, last_name FROM author", function(err, row){
-            const autor = row.first_name + ' ' +  row.last_name;
-            if (autor === livro.autor){
-                var autor_id = row.id;
+        db.each("SELECT id, first_name, last_name FROM author", function(err, row){                   //método utilizado para se encontrar o id do autor dado o nome dele
+            const autor = row.first_name + ' ' +  row.last_name;                                      // método importante para que de maneira mais intuitiva e natural, se cadastre um livro
+            if (autor === livro.autor){                                                               // o livro é ligado ao autor por meio de chave estrangeira, sendo essa o seu id
+                var autor_id = row.id;                                                                //este método é execuado mais vezes no código
                 stmt.run(null, autor_id, livro.title, livro.readed, livro.favorite, d, null);
                 res.send("Livro registrado com sucesso!");
             }
