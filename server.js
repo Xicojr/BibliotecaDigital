@@ -1,139 +1,150 @@
 const express = require('express');
-
 const app = express();
-
 const PORT = process.env.PORT || 5000;
 
-let autores = [{
-    nome: 'Guimarães Rosa',
-    nacionalidade: 'Brasileiro',
-    nascimento: '27/06/1908',
-    generos: ['Romance', 'Conto', 'Poesia']
-},
-{
-    nome: 'Monteiro Lobato',
-    nacionalidade: 'Brasileiro',
-    nascimento: '18/04/1882',
-    generos: ['Romance', 'Infantil']
-},
-{
-    nome: 'Monteiro Lobato',
-    nacionalidade: 'Brasileiro',
-    nascimento: '18/04/1882',
-    generos: ['Romance', 'Infantil']
-}
-]
-
-let livros = [{
-    titulo: 'Reinações de Narizinho',
-    ano: 1931,
-    n_paginas: 126,
-    edicao: 2,
-    editora: 'Globo',
-    autor: 'Monteiro Lobato'
-},
-{
-    titulo: 'O picapau Amarelo',
-    ano: 1939,
-    n_paginas: 147,
-    edicao: 3,
-    editora: 'Globo',
-    autor: 'Monteiro Lobato'
-},
-{
-    titulo: 'Sagarana',
-    ano: 1946,
-    n_paginas: 268,
-    edicao: 7,
-    editora: 'Abril',
-    autor: 'Guimarães Rosa'
-}
-]
+//Conexão ao Banco de Dados
+const sqlite3 = require('sqlite3').verbose();
+const db = new sqlite3.Database('Banco_Biblioteca.sdb', (err) => {
+    if (err){
+        console.error(err.message);
+    }
+    console.log('Conectado ao Banco de Dados!!')
+});
 
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
 
-app.post('autor', function (req, res){
-    const autor = req.body;
+d = new Date();
 
-    for (var i = 0; i< autores.length; i++)  {
-        if (autor === autores[i].nome){
-            res.send("Autor já registrado");
-            break;
-        };
-    };
+db.serialize(function(){
 
-    autores.push(autor);
+    app.post('/autor', function (req, res){
+        const autor = req.body;
+        
+        var stmt = db.prepare("INSERT INTO author VALUES (?, ?, ?, ?, ?)");
 
-    res.send("Autor registrado com sucesso!");
-});
-
-app.post('/livro', function (req, res){
-    const livro = req.body;
-
-    console.log(livro);
-
-    livros.push(livro);
+        stmt.run(null, autor.nome, autor.sobrenome, d, null);
     
-    res.send("Livro registrado com sucesso!");
-});
+        res.send("Autor registrado com sucesso!");
+    });
+    
+    app.post('/livro', function (req, res){
+        const livro = req.body;
+    
+        var stmt = db.prepare("INSERT INTO book VALUES (?, ?, ?, ?, ?, ?, ?)");
 
-app.put('/autor', function (req, res){
-    const autor = req.body;
+        db.each("SELECT id, first_name, last_name FROM author", function(err, row){
+            const autor = row.first_name + ' ' +  row.last_name;
+            if (autor === livro.autor){
+                var autor_id = row.id;
+                stmt.run(null, autor_id, livro.title, livro.readed, livro.favorite, d, null);
+                res.send("Livro registrado com sucesso!");
+            }
+            else{
+                res.send("Autor não registrado.");
+            }
+        });        
+    });
+    
+    app.put('/autor', function (req, res){
+        const autor = req.body.nome;
+        var autor_id = null;
 
-    for (var i =0; i< autores.length; i++)  {
-        if (autor.nome === autores[i].nome){
-            autores[i] = autor;
-        };
-    };
+        db.each("SELECT id, first_name, last_name FROM author", function(err, row){
+            var autor_nome = row.first_name + ' ' +  row.last_name;
+            if (autor === autor_nome){
+                var autor_id = row.id;
+                
+                var stmt = db.prepare("UPDATE author SET first_name = (?), last_name = (?), updated_at = (?) WHERE id = (?)");
 
-    res.send(autor.nome + " atualizado com sucesso!");
-});
+                stmt.run(req.body.first_name, req.body.last_name, d, autor_id);
 
-app.put('/livro', function (req, res){
-    const livro = req.body;
+                res.send(autor_nome + " atualizado com sucesso para " + req.body.first_name + ' ' + req.body.last_name);
+            }
+            else{
+                res.send("Autor não registrado.");
+            }
+        });
+    });
+    
+    app.put('/livro', function (req, res){
+        const livro = req.body.titulo;
+        var livro_id = null;
+        var autor_id = null;
+    
+        db.each("SELECT id, title FROM book", function(err, row){
+            if (livro === row.title){
+                var livro_id = row.id;
 
-    for (var i =0; i< livros.length; i++)  {
-        if (livro.titulo === livros[i].titulo){
-            livros[i] = livro;
-        };
-    };
+                db.each("SELECT id, first_name, last_name FROM author", function(req2, res2){
+                    var autor = res2.first_name + ' ' +  res2.last_name;
+                    if (autor === req.body.autor){
+                        autor_id = res2.id;
 
-    res.send(livro.titulo + " atualizado com sucesso!");
-});
+                        var stmt = db.prepare("UPDATE book SET author_id = (?), readed = (?), favorite = (?), updated_at = (?) WHERE id = (?)");
+                        stmt.run(autor_id, req.body.lido, req.body.favorito, d, autor_id);
+                        res.send("Livro " + livro +" atualizado com sucesso!");
+                    }
+                    else{
+                        res.send("Autor não registrado.");  
+                    }
+                });
+            }
+            else{
+                res.send("Livro não registrado.");
+            }
+        });
+    });
+    
+    app.delete('/autor', function (req, res){
+        const nome_autor = req.body.nome;
+    
+        var stmt = db.prepare("DELETE FROM author WHERE id = (?)");
 
-app.delete('/autor', function (req, res){
-    const autor = req.body;
+        db.each("SELECT id, first_name, last_name FROM author", function(err, row){
+            const autor = row.first_name + ' ' +  row.last_name;
+            if (autor === nome_autor){
+                var autor_id = row.id;
+                stmt.run(autor_id);
+                res.send(autor + " deletado com sucesso!");              
+            }
+            else{
+                res.send("Autor não registrado!");
+            }
+        });
+    });
+    
+    app.delete('/livro', function (req, res){
+        const livro = req.body.titulo;
+    
+        var stmt = db.prepare("DELETE FROM book WHERE id = (?)");
 
-    for (var i =0; i< autores.length; i++)  {
-        if (autor.nome === autores[i].nome){
-            autores.splice(i, 1);
-        };
-    };
+        db.each("SELECT id, title FROM book", function(err, row){
+            if (livro === row.title){
+                var livro_id = row.id;
+                stmt.run(livro_id);
+                res.send("Livro " + livro + " deletado com sucesso!");              
+            }
+            else{
+                res.send("Titulo não registrado!");
+            }
+        });
+    });
+    
+    app.get('/biblioteca', function(req, res){
+        db.each("SELECT * FROM book", function(err, row){
+            livros.push(row);
+        });   
+    })
+    
+    app.get('/autores', function(req, res){
+        db.each("SELECT * FROM author", function (err, row){
+            res.send(row);
+        })
+    })
+    
+    app.listen(PORT, function(){
+        console.log("Servidor inicializado!")
+    });
 
-    res.send(autor.nome + " deletado com sucesso!");
-});
-
-app.delete('/livro', function (req, res){
-    const livro = req.body;
-
-    for (const i =0; i< livros.length; i++)  {
-        if (livro.titulo === livros[i].titulo){
-            livros.splice(i, 1);
-        };
-    };
-
-    res.send(livro.titulo + " deletado com sucesso!");
-});
-
-app.get('/biblioteca', function(req, res){
-    res.send(livros);
 })
-
-app.get('/autores', function(req, res){
-    res.send(autores);
-})
-
-app.listen(PORT, function(){
-    console.log("Servidor inicializado!")
-});
