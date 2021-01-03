@@ -9,8 +9,8 @@ function cadastrarAutor(nome, sobrenome){                                       
     nome: nome,
     sobrenome: sobrenome
   })
-    .then(function(response){
-        console.log(response);
+  .then(function(response){
+    console.log(response.data);
     })
     .catch(function (error){
       console.log(error);
@@ -24,8 +24,8 @@ function cadastrarLivro(titulo, autor, lido, favorito){                         
     readed: lido,
     favorite: favorito
   })
-    .then(function(response){
-        console.log(response);
+  .then(function(response){
+    console.log(response.data);
     })
     .catch(function (error){
       console.log(error);
@@ -38,8 +38,8 @@ function editarAutor(nome, first_name, last_name){                              
     first_name: first_name,
     last_name: last_name
   })
-    .then(function(response){
-        console.log(response);
+  .then(function(response){
+    console.log(response.data);
     })
     .catch(function (error){
       console.log(error);
@@ -52,8 +52,8 @@ function editarLivro(titulo, lido, favorito){                                   
     lido: lido,
     favorito: favorito
   })
-    .then(function(response){
-        console.log(response);
+  .then(function(response){
+    console.log(response.data);
     })
     .catch(function (error){
       console.log(error);
@@ -65,7 +65,7 @@ function deletarAutor(nome){                                                    
     nome: nome
   })
     .then(function(response){
-        console.log(response);
+      console.log(response.data);
     })
     .catch(function (error){
       console.log(error);
@@ -77,7 +77,7 @@ function deletarLivro(titulo){                                                  
     titulo: titulo
   })
     .then(function(response){
-        console.log(response);
+        console.log(response.data);
     })
     .catch(function (error){
       console.log(error);
