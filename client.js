@@ -1,9 +1,11 @@
-const axios = require('axios');
+const axios = require('axios').default;
+
+const client = axios.create({baseURL:"http://127.0.0.1:5000"})
 
 // Utilizada a biblioteca Axios para implementação dos métodos de requisição HTTP e esses métodos organizados em função para facilitar a chamada das mesmas.
 
 function cadastrarAutor(nome, sobrenome){                                       // função com o método http post para cadastro dos autores
-  axios.post('http://127.0.0.1:5000/autor', {
+  client.post('/autor', {
     nome: nome,
     sobrenome: sobrenome
   })
@@ -16,7 +18,7 @@ function cadastrarAutor(nome, sobrenome){                                       
 }
 
 function cadastrarLivro(titulo, autor, lido, favorito){                            // função com o método http post para cadastro dos livros
-  axios.post('http://127.0.0.1:5000/livro', {
+  client.post('/livro', {
     title: titulo,
     autor: autor,
     readed: lido,
@@ -31,7 +33,7 @@ function cadastrarLivro(titulo, autor, lido, favorito){                         
 }
 
 function editarAutor(nome, first_name, last_name){                                 // função com o método http get para editar os autores
-  axios.put('http://127.0.0.1:5000/autor', {
+  client.put('/autor', {
     nome: nome,
     first_name: first_name,
     last_name: last_name
@@ -45,7 +47,7 @@ function editarAutor(nome, first_name, last_name){                              
 }
 
 function editarLivro(titulo, lido, favorito){                                      // função com o método http get para edição dos livros
-  axios.put('http://127.0.0.1:5000/livro', {
+  client.put('/livro', {
     titulo: titulo,
     lido: lido,
     favorito: favorito
@@ -59,7 +61,7 @@ function editarLivro(titulo, lido, favorito){                                   
 }
 
 function deletarAutor(nome){                                                       // função com o método http delete para deleção dos autores
-  axios.delete('http://127.0.0.1:5000/autor', {
+  client.delete('/autor', {
     nome: nome
   })
     .then(function(response){
@@ -71,7 +73,7 @@ function deletarAutor(nome){                                                    
 }
 
 function deletarLivro(titulo){                                                     // função com o método http post para deleção dos livros
-  axios.delete('http://127.0.0.1:5000/livro', {
+  client.delete('/livro', {
     titulo: titulo
   })
     .then(function(response){
@@ -83,7 +85,7 @@ function deletarLivro(titulo){                                                  
 }
 
 function listarBiblioteca(){                                                       // função com o método http get para listagem de todos os livros cadastrados no Banco de Dados
-  axios.get('http://127.0.0.1:5000/biblioteca')
+  client.get('/biblioteca')
     .then(function (response){
       const biblioteca = response.data;
 
@@ -94,7 +96,7 @@ function listarBiblioteca(){                                                    
     })}
 
 function listarAutores(){                                                          // função com o método http get para listagem de todos os autores cadastrados no Banco de Dados
-  axios.get('http://127.0.0.1:5000/autores')
+  client.get('/autores')
     .then(function (response){
       const autores = response.data;
 
